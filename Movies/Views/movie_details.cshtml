@@ -1,0 +1,37 @@
+﻿@model Movies.Models.Pages.MovieDetailsPage
+@{ 
+    Layout = "ajax_loader.cshtml";
+}
+
+<div class="container">
+    <h2>@Model.Movie.General.Title</h2>
+    @if (Model.Movie.General.ReleaseYear.HasValue)
+    {
+        <p>Release year: @Model.Movie.General.ReleaseYear.Value</p>
+    }
+    <p>Budget: @Model.Movie.Budget</p>
+    <p>Revenue: @Model.Movie.Revenue</p>
+    <p>Duration: @Model.Movie.Duration</p>
+    @if (!string.IsNullOrEmpty(Model.Movie.ImdbLink))
+    {
+        <p><a href="@Model.Movie.ImdbLink" target="_blank">View on IMDB</a></p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Movie.Website))
+    {
+        <p><a href="@Model.Movie.Website" target="_blank">Visit official website</a></p>
+    }
+    <a href="#" data-action="favorites.remove" data-id="@Model.Movie.General.MovieId" class="btn btn-danger @(!Model.Movie.General.IsFavorite ? "d-none" : "")">Remove from favorites</a>
+    <a href="#" data-action="favorites.add" data-id="@Model.Movie.General.MovieId" class="btn btn-primary @(Model.Movie.General.IsFavorite ? "d-none" : "")">Add to favorites</a>
+</div>
+
+<div class="container">
+    @if (string.IsNullOrEmpty(Model.Movie.Teaser))
+    {
+        <p class="text-center"><strong>No teaser available.</strong></p>
+    }
+    else
+    {
+        <h4>Teaser</h4>
+        @Html.Raw(Model.Movie.Teaser)
+    }
+</div>

@@ -1,0 +1,30 @@
+﻿@model Movies.Models.Pages.WebPage
+@using Movies 
+@if (!Model.IsAjax)
+{
+    Layout = "layout.cshtml";
+}
+
+<div class="d-none" id="page_title">@Model.Title</div>
+
+@{
+    Dictionary<string, string> tabs = new Dictionary<string, string>()
+    {
+        { WebEndpoints.POPULAR_MOVIES, "Popular movies" },
+        { WebEndpoints.TOP_RATED_MOVIES, "Top rated movies" }
+    };
+}
+
+<ul class="nav nav-tabs">
+    @foreach (var tab in tabs)
+    {
+        <li class="nav-item">
+            <a class="nav-link @(tab.Key == Model.AbsoluteUrl ? "active" : "")" href="@tab.Key">@tab.Value</a>
+        </li>
+    }
+</ul>
+<div class="tab-content">
+    <div class="tab-pane show active">
+        @RenderBody()
+    </div>
+</div>

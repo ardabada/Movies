@@ -1,0 +1,62 @@
+﻿@model Movies.Models.Pages.MoviesListPage
+@using Movies
+@{ 
+    if (!Model.IsPaginationMode)
+        Layout = "ajax_loader.cshtml";
+
+    void RenderMoviesList()
+    {
+        if (Model.Movies.Result == null || !Model.Movies.Result.Any())
+        {
+            if (!Model.IsPaginationMode)
+            {
+                <p><strong>No movies</strong></p>
+            }
+            return;
+        }
+        foreach (var movie in Model.Movies.Result)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card m-2">
+                    <div class="movie-poster-preview" style="background-image:url(@movie.Poster)"></div>
+                    <div class="card-body">
+                        <h5 class="card-title">@movie.Title @(movie.ReleaseYear.HasValue ? "(" + movie.ReleaseYear.Value + ")" : "")</h5>
+                        <p class="card-text">Rank: @movie.Rank</p>
+                        <a href="@WebEndpoints.MOVIE_DETAILS.Replace(WebEndpoints._MOVIE_ID_PLACEHOLDER, movie.MovieId.ToString())" class="btn btn-primary">Details</a>
+                        <a href="#" data-action="favorites.remove" data-id="@movie.MovieId" class="btn btn-danger @(!movie.IsFavorite ? "d-none" : "")">Remove from favorites</a>
+                        <a href="#" data-action="favorites.add" data-id="@movie.MovieId" class="btn btn-primary @(movie.IsFavorite ? "d-none" : "")">Add to favorites</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    void RenderLoadMoreButton()
+    {
+        if (Model.Movies.CanLoadMore)
+        {
+            <p class="text-center">
+                <button class="btn btn-primary" 
+                        data-action="movies.loadMore" 
+                        data-next-page="@(Model.Movies.CurrentPage + 1)"
+                        data-movies="@Model.AbsoluteUrl"
+                        >Load more</button>
+            </p>
+        }
+    }
+} 
+
+@if (!Model.IsPaginationMode)
+{
+    <h4>@Model.DiscoverText</h4>
+
+    <div class="row" name="movies">
+        @{ RenderMoviesList(); }
+    </div>
+
+    RenderLoadMoreButton();
+}
+else
+{
+    RenderMoviesList();
+    RenderLoadMoreButton();
+}
